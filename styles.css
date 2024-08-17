@@ -1,0 +1,48 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.main {
+    /* background-color: rgb(148, 233, 233); */
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+canvas {
+    background-color: rgb(160, 119, 197); 
+    height: 100%;
+    width: 100%;
+}
+
+.taskbar {
+    position: fixed;           /* Hace que la taskbar quede fija en la pantalla */
+    right: 20px;               /* Separa la taskbar del margen derecho */
+    top: 50%;                  /* Centra verticalmente la taskbar */
+    transform: translateY(-50%); /* Ajusta para que quede perfectamente centrada */
+    background-color: rgba(0, 0, 0, 0.7); /* Fondo semi-transparente para resaltar */
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Añade una sombra para darle profundidad */
+    color: white;              /* Texto blanco */
+    z-index: 10;               /* Asegura que esté sobre otros elementos, incluido el canvas */
+    display: flex;
+    flex-direction: column;  /* Alinea los botones en una columna */
+    gap: 10px;               /* Añade un pequeño espacio entre los botones */
+}
+
+.taskbar button {
+    width: 100%;             /* Haz que los botones ocupen todo el ancho de la taskbar */
+    padding: 10px;           /* Espacio interno para hacer los botones más grandes */
+    background-color: #333;  /* Color de fondo del botón */
+    color: white;            /* Color del texto */
+    border: none;            /* Sin borde */
+    border-radius: 4px;      /* Bordes ligeramente redondeados */
+    cursor: pointer;         /* Cambia el cursor a una mano al pasar sobre los botones */
+}
+
+.taskbar button:hover {
+    background-color: #555;  /* Cambia el color de fondo cuando se pasa el mouse */
+}
