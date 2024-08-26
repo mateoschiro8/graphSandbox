@@ -17,4 +17,12 @@ export class Nodo {
     isAt(a, b) {
         return (Math.sqrt((this.x - a)**2 + (this.y - b)**2) <= this.radius);
     }
+
+    resaltar() {
+        this.color = 'red';
+    }
+
+    noResaltar() {
+        this.color = 'green';
+    }
 }

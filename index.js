@@ -1,4 +1,5 @@
-import { Nodo } from './nodo.js';
+import { Grafo } from './clases/grafo.js';
+import { Nodo } from './clases/nodo.js';
 
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
@@ -11,11 +12,22 @@ function ajustarTamañoCanvas() {
 ajustarTamañoCanvas();
 window.addEventListener('resize', ajustarTamañoCanvas);
 
-let nodos = [];
+let grafo = new Grafo;
 let isDragging = false;
-let startX, startY;
+let startX, startY, mouseX, mouseY;
+let agregarNodo, sacarNodo;
+let rect;
+
+function obtenerCoordenadas(event) {
+    const rect = canvas.getBoundingClientRect();
+    mouseX = event.clientX - rect.left;
+    mouseY = event.clientY - rect.top;
+}
 
 canvas.addEventListener('mousedown', (event) => {
+
+    obtenerCoordenadas(event);
+
     // 0 -> botón izquierdo, 2 -> botón derecho
     if (event.button === 0 || event.button === 2) { 
         startX = event.clientX;
@@ -33,6 +45,9 @@ canvas.addEventListener('mousemove', (event) => {
             isDragging = true;
         }
     }
+    if (agregarNodo || sacarNodo) 
+        obtenerCoordenadas(event);
+    
 });
 
 canvas.addEventListener('mouseup', (event) => {
@@ -40,17 +55,20 @@ canvas.addEventListener('mouseup', (event) => {
         if (isDragging) {
             console.log('Arrastre detectado');
         } else {
-            const rect = canvas.getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
+            obtenerCoordenadas(event);
 
             if (event.button === 0) {
-                // Botón izquierdo
-                const nuevoNodo = new Nodo(x, y);
-                nodos.push(nuevoNodo);
-            } else {
-                // Botón derecho
-                nodos = nodos.filter(nodo => !nodo.isAt(x, y));
+
+                if(agregarNodo) {
+                    grafo.agregarNodoAt(mouseX, mouseY);
+                    agregarNodo = false;
+                }
+
+                else if(sacarNodo) {
+                    if(grafo.sacarNodoAt(mouseX, mouseY)) 
+                        sacarNodo = false;
+
+                }
             }
         }
         startX = undefined;
@@ -59,13 +77,31 @@ canvas.addEventListener('mouseup', (event) => {
     }    
 });
 
+document.getElementById("agregarNodo").addEventListener("click", () => {
+    agregarNodo = true;
+    sacarNodo = false;
+});
+
+document.getElementById("sacarNodo").addEventListener("click", () => {
+    sacarNodo = true;
+    agregarNodo = false;
+});
 
 function draw() {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    nodos.forEach(nodo => {nodo.draw(ctx)});
+    grafo.draw(ctx);
 
+    if (agregarNodo && mouseX !== undefined && mouseY !== undefined) {
+        ctx.globalAlpha = 0.5; 
+        new Nodo(mouseX, mouseY).draw(ctx, 'lightgreen');
+        ctx.globalAlpha = 1.0; 
+    }
+
+    if (sacarNodo && mouseX !== undefined && mouseY !== undefined) {
+        grafo.resaltarNodoAt(mouseX, mouseY);
+    }
     
     window.requestAnimationFrame(draw);
 
