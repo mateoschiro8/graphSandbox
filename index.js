@@ -5,6 +5,7 @@ var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 
 function ajustarTamañoCanvas() {
+    const rect = canvas.getBoundingClientRect();
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
 }
@@ -12,24 +13,15 @@ function ajustarTamañoCanvas() {
 ajustarTamañoCanvas();
 window.addEventListener('resize', ajustarTamañoCanvas);
 
-let grafo = new Grafo;
+let radio = 25;
+let grafo = new Grafo(radio);
 let isDragging = false;
 let startX, startY, mouseX, mouseY;
 let agregarNodo, sacarNodo;
-let rect;
-
-function obtenerCoordenadas(event) {
-    const rect = canvas.getBoundingClientRect();
-    mouseX = event.clientX - rect.left;
-    mouseY = event.clientY - rect.top;
-}
 
 canvas.addEventListener('mousedown', (event) => {
 
-    obtenerCoordenadas(event);
-
-    // 0 -> botón izquierdo, 2 -> botón derecho
-    if (event.button === 0 || event.button === 2) { 
+    if (event.button === 0) { 
         startX = event.clientX;
         startY = event.clientY;
         isDragging = false;
@@ -37,7 +29,10 @@ canvas.addEventListener('mousedown', (event) => {
 });
 
 canvas.addEventListener('mousemove', (event) => {
-    if ((event.button === 0 || event.button === 2) && startX !== undefined && startY !== undefined) {
+    
+    [mouseX, mouseY] = [event.x, event.y];
+
+    if (event.button === 0 && startX !== undefined && startY !== undefined) {
         const dx = event.clientX - startX;
         const dy = event.clientY - startY;
 
@@ -45,17 +40,18 @@ canvas.addEventListener('mousemove', (event) => {
             isDragging = true;
         }
     }
-    if (agregarNodo || sacarNodo) 
-        obtenerCoordenadas(event);
     
 });
 
 canvas.addEventListener('mouseup', (event) => {
-    if (event.button === 0 || event.button === 2) {
+
+    if (event.button === 0) {
+
         if (isDragging) {
-            console.log('Arrastre detectado');
+
+            grafo.agregarArista(startX, startY, mouseX, mouseY);
+           
         } else {
-            obtenerCoordenadas(event);
 
             if (event.button === 0) {
 
@@ -95,7 +91,7 @@ function draw() {
 
     if (agregarNodo && mouseX !== undefined && mouseY !== undefined) {
         ctx.globalAlpha = 0.5; 
-        new Nodo(mouseX, mouseY).draw(ctx, 'lightgreen');
+        new Nodo(mouseX, mouseY, radio).draw(ctx, 'lightgreen');
         ctx.globalAlpha = 1.0; 
     }
 
